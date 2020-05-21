@@ -1,0 +1,27 @@
+version: '3'
+services:
+  elastic:
+    container_name: elasticsearch
+    image: elasticsearch:6.8.9
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    hostname: elasticsearch
+  kibana:
+    container_name: kibana
+    image: kibana:6.8.9
+    ports:
+      - '5601:5601'
+    hostname: kibana
+    links:
+      - elastic
+  logstash:
+    container_name: logstash
+    image: logstash:6.4.0
+    ports:
+      - '9500:9500'
+    command: logstash -f /etc/logstash/conf.d/logstash.conf
+    volumes:
+      - ./logstash/logstash.conf:/etc/logstash/conf.d/logstash.conf:ro
+    depends_on:
+      - elastic
